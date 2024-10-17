@@ -41,9 +41,7 @@ publishing {
         }
     }
 
-    repositories {
-        mavenLocal()
-    }
+
 }
 
 android {

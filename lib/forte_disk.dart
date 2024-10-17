@@ -6,7 +6,7 @@ import 'package:sunmi_sdk/models/void_response_model.dart';
 
 
 class SunmiSdk {
-  static const platform = MethodChannel('forte_sdk_channel');
+  static const platform = MethodChannel('sunmi_sdk_channel');
 
   // SDK Initialization method
   // Set Application Mode method

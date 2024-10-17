@@ -83,8 +83,8 @@ dependencies {
 
     implementation 'com.android.support:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.12.0'
-    compileOnly fileTree(dir: 'libs', include: ['*.aar'])
-//    implementation files('libs/VALORSDK.aar')
+    implementation files('libs/eu.ashburn.smartpos.api.release.1.8.0@A5ddd83F.aar')
+
 
 
 }

@@ -78,7 +78,6 @@ class SunmiSdk {
     }
   }
 
-
   Future<VoidResponse> voidTransaction({
     required String operationId,
     required int partialVoidAmount,
@@ -99,7 +98,6 @@ class SunmiSdk {
       throw Exception("Void transaction failed: ${e.message}");
     }
   }
-
 
   Future<void> closeDocument({
     required String documentNr,

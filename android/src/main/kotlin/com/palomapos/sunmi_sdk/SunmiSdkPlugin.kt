@@ -23,7 +23,7 @@ import org.json.JSONObject
 import java.util.Date
 
 /** SunmiSdkPlugin */
-class SunmiSdkPlugin : FlutterPlugin, PluginRegistry.ActivityResultListener, MethodCallHandler {
+class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
 
     // The MethodChannel that will communicate between Flutter and native Android
     private lateinit var channel: MethodChannel
@@ -143,13 +143,15 @@ class SunmiSdkPlugin : FlutterPlugin, PluginRegistry.ActivityResultListener, Met
     }
 
     // Handle responses from activities (e.g., payments or voids)
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+     fun activityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         when (EFTRequestCode.get(requestCode)) {
             EFTRequestCode.SALE -> handleSaleResponse(resultCode, data)
             EFTRequestCode.VOID -> handleVoidResponse(resultCode, data)
             EFTRequestCode.REFUND -> handleRefundResponse(resultCode, data)
+
             else -> pendingResult?.error("UNKNOWN_REQUEST", "Unknown request code: $requestCode", null)
         }
+
         return true
     }
 

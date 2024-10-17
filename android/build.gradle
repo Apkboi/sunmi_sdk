@@ -27,6 +27,24 @@ rootProject.allprojects {
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenAar(MavenPublication) {
+            groupId = 'com.paloma' // Your group ID
+            artifactId = 'sunmisdk' // Your artifact ID
+            version = '1.0.0' // Version
+
+            // Path to your .aar file in libs folder
+            artifact(file('libs/eu.ashburn.smartpos.api.release.1.8.0@A5ddd83F.aar')) // Cleaned up artifact path
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
 
 android {
     if (project.android.hasProperty("namespace")) {

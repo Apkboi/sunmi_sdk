@@ -1,4 +1,5 @@
 package com.palomapos.sunmi_sdk
+
 import RefundResponse
 import SaleRequest
 import SaleResponse
@@ -157,7 +158,6 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
             }
 
 
-
             else -> {
                 result.notImplemented() // Return a "not implemented" error for unknown method calls
             }
@@ -165,7 +165,7 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     // Handle responses from activities (e.g., payments or voids)
-     fun activityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    fun activityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         when (EFTRequestCode.get(requestCode)) {
             EFTRequestCode.SALE -> handleSaleResponse(resultCode, data)
             EFTRequestCode.VOID -> handleVoidResponse(resultCode, data)
@@ -176,6 +176,13 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
                     is Response.Success -> pendingResult?.success("Document closed successfully")
                     is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
                     null -> pendingResult?.error("CLOSE_DOC_ERROR", "Closing document failed", null)
+                }
+            }
+            EFTRequestCode.PRINT_PLAINTEXT -> {
+                when (val response = EFTResponseFactory.getPrintPlaintextResponse(resultCode, data)) {
+                    is Response.Success -> pendingResult?.success("Printing successful")
+                    is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
+                    null -> pendingResult?.error("PRINT_ERROR", "Printing failed", null)
                 }
             }
 
@@ -226,55 +233,55 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
             is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
             null -> pendingResult?.error("PAYMENT_ERROR", "Payment failed", null)
 
-    }
-
-}
-
-// Example function for initiating a card payment
-private fun initiateCardPayment(amount: Int?, currencyCode: String?, documentNr: String?) {
-    // Here you initiate the card payment via your SDK or native logic
-    // When done, call pendingResult?.success(resultJson) to return the result to Flutter
-
-    // Example placeholder logic:
-    val resultJson = JSONObject().apply {
-        put("operationId", "123456")
-        put("amountAuthorized", amount)
-        put("currencyCode", currencyCode)
-        put("documentNr", documentNr)
-    }
-    pendingResult?.success(resultJson.toString()) // Send the result back to Flutter
-}
-
-
-private fun handleVoidResponse(resultCode: Int, data: Intent?) {
-    when (val response = EFTResponseFactory.getVoidResponse(resultCode, data)) {
-        is Response.Success -> {
-            val voidResponse = response.data
-            val voidResponseJson = JSONObject().apply {
-                put("operationId", voidResponse.operationId)
-                put("amountAuthorized", voidResponse.amountAuthorized)
-            }
-            pendingResult?.success(voidResponseJson.toString())
         }
 
-        is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
-        null -> pendingResult?.error("VOID_ERROR", "Void transaction failed", null)
     }
-}
 
-private fun handleRefundResponse(resultCode: Int, data: Intent?) {
-    when (val response = EFTResponseFactory.getRefundResponse(resultCode, data)) {
-        is Response.Success -> {
-            val refundResponse = response.data
-            val refundResponseJson = JSONObject().apply {
-                put("operationId", refundResponse.operationId)
-                put("amountAuthorized", refundResponse.amountAuthorized)
-            }
-            pendingResult?.success(refundResponseJson.toString())
+    // Example function for initiating a card payment
+    private fun initiateCardPayment(amount: Int?, currencyCode: String?, documentNr: String?) {
+        // Here you initiate the card payment via your SDK or native logic
+        // When done, call pendingResult?.success(resultJson) to return the result to Flutter
+
+        // Example placeholder logic:
+        val resultJson = JSONObject().apply {
+            put("operationId", "123456")
+            put("amountAuthorized", amount)
+            put("currencyCode", currencyCode)
+            put("documentNr", documentNr)
         }
-
-        is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
-        null -> pendingResult?.error("REFUND_ERROR", "Refund failed", null)
+        pendingResult?.success(resultJson.toString()) // Send the result back to Flutter
     }
-}
+
+
+    private fun handleVoidResponse(resultCode: Int, data: Intent?) {
+        when (val response = EFTResponseFactory.getVoidResponse(resultCode, data)) {
+            is Response.Success -> {
+                val voidResponse = response.data
+                val voidResponseJson = JSONObject().apply {
+                    put("operationId", voidResponse.operationId)
+                    put("amountAuthorized", voidResponse.amountAuthorized)
+                }
+                pendingResult?.success(voidResponseJson.toString())
+            }
+
+            is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
+            null -> pendingResult?.error("VOID_ERROR", "Void transaction failed", null)
+        }
+    }
+
+    private fun handleRefundResponse(resultCode: Int, data: Intent?) {
+        when (val response = EFTResponseFactory.getRefundResponse(resultCode, data)) {
+            is Response.Success -> {
+                val refundResponse = response.data
+                val refundResponseJson = JSONObject().apply {
+                    put("operationId", refundResponse.operationId)
+                    put("amountAuthorized", refundResponse.amountAuthorized)
+                }
+                pendingResult?.success(refundResponseJson.toString())
+            }
+
+            is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
+            null -> pendingResult?.error("REFUND_ERROR", "Refund failed", null)
+        }
+    }
 }

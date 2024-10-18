@@ -59,6 +59,26 @@ class SaleResponseModel {
       dccStatus: json['DCCStatus'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'operationId': operationId,
+    'cryptogram': cryptogram,
+    'documentNr': documentNr,
+    'amountAuthorized': amountAuthorized,
+    'amountAdditional': amountAdditional,
+    'authCode': authCode,
+    'rrn': rrn,
+    'stan': stan,
+    'cardType': cardType,
+    'state': state,
+    'cvmApplied': cvmApplied,
+    'receiptText': receiptText,
+    'actionCode': actionCode,
+    'cardPAN': cardPAN,
+    'cardName': cardName,
+    'amountAdditionalField': amountAdditionalField,
+    'dccStatus': dccStatus,
+  };
 }
 
 class AmountAdditional {

@@ -86,6 +86,26 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
 //              initiateCardPayment(amount, currencyCode, documentNr)
             }
 
+            "closeDocument" -> {
+                val documentNr = call.argument<String>("documentNr")!!
+                val operationIdList = call.argument<List<String>>("operationIdList")!!
+                val skipReceiptPrint = call.argument<Boolean>("skipReceiptPrint")!!
+                val skipCustomerReceiptPrint = call.argument<Boolean>("skipCustomerReceiptPrint")!!
+
+                // Call the closeDocument method from PaymentSDKHandler
+                val closeDocRequest = paymentSDKHandler.closeDocument(
+                    documentNr = documentNr,
+                    operationIdList = operationIdList,
+                    skipReceiptPrint = skipReceiptPrint,
+                    skipCustomerReceiptPrint = skipCustomerReceiptPrint
+                )
+                pendingResult = result
+                if (closeDocRequest != null) {
+
+                    activity?.let { startActivityForResult(it, closeDocRequest.intent(), closeDocRequest.requestCode(), null) }
+                }
+            }
+
             "voidTransaction" -> {
                 val operationId = call.argument<String>("operationId")!!
                 val partialVoidAmount = call.argument<Long>("partialVoidAmount")!!
@@ -136,6 +156,8 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
 
             }
 
+
+
             else -> {
                 result.notImplemented() // Return a "not implemented" error for unknown method calls
             }
@@ -148,6 +170,14 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
             EFTRequestCode.SALE -> handleSaleResponse(resultCode, data)
             EFTRequestCode.VOID -> handleVoidResponse(resultCode, data)
             EFTRequestCode.REFUND -> handleRefundResponse(resultCode, data)
+            // Handle Close Document response
+            EFTRequestCode.CLOSE_DOC -> {
+                when (val response = EFTResponseFactory.getCloseDocResponse(resultCode, data)) {
+                    is Response.Success -> pendingResult?.success("Document closed successfully")
+                    is Response.Error -> pendingResult?.error(response.errorCode, response.errorMessage, response.errorMessage)
+                    null -> pendingResult?.error("CLOSE_DOC_ERROR", "Closing document failed", null)
+                }
+            }
 
             else -> pendingResult?.error("UNKNOWN_REQUEST", "Unknown request code: $requestCode", null)
         }

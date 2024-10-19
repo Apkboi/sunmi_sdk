@@ -117,7 +117,7 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
                     operationId = operationId,
                     skipReceiptPrint = skipReceiptPrint,
                     skipCustomerReceiptPrint = skipCustomerReceiptPrint,
-                    partialVoidAmount = 115L
+                    partialVoidAmount = partialVoidAmount
                 )
                 pendingResult = result
                 if (voidRequest != null) {

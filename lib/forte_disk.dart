@@ -4,7 +4,6 @@ import 'package:sunmi_sdk/models/refund_response_model.dart';
 import 'package:sunmi_sdk/models/sales_response_model.dart';
 import 'package:sunmi_sdk/models/void_response_model.dart';
 
-
 class SunmiSdk {
   static const platform = MethodChannel('sunmi_sdk_channel');
 
@@ -33,12 +32,20 @@ class SunmiSdk {
 
   // Start Card Payment
 
-  Future<SaleResponseModel> startCardPayment(int amount, String currencyCode, String documentNr) async {
+  Future<SaleResponseModel> startCardPayment(
+    int amount,
+    String currencyCode,
+    String documentNr, {
+     bool skipReceiptPrint =true,
+    bool skipCustomerReceiptPrint = true,
+  }) async {
     try {
       final result = await platform.invokeMethod('startCardPayment', {
         'amount': amount,
         'currencyCode': currencyCode,
         'documentNr': documentNr,
+        'skipReceiptPrint': skipReceiptPrint,
+        'skipCustomerReceiptPrint': skipCustomerReceiptPrint,
       });
 
       final jsonResult = jsonDecode(result) as Map<String, dynamic>;

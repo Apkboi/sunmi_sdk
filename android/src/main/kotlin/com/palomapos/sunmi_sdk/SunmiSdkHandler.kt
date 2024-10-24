@@ -21,7 +21,8 @@ class SunmiSdkHandler(private val context: Context) {
 
     // Function to return SaleRequest instead of Intent for card payment
     fun startCardPayment(
-        amount: Long, currencyCode: String, documentNr: String
+        amount: Long, currencyCode: String, documentNr: String, skipReceiptPrint: Boolean,
+        skipCustomerReceiptPrint: Boolean
     ): SaleRequest {
         // Create version string from package name and version code
         val ecrVersion = "${context.packageName}-1.0.0"
@@ -30,7 +31,7 @@ class SunmiSdkHandler(private val context: Context) {
         val eftFactory = EFTRequestFactory(CustomSmartPosLogger(), ecrVersion)
 
         // Create SaleRequestModel with payment details
-        val saleRequest = eftFactory.getSaleRequest(SaleRequestModel(amount, currencyCode, documentNr))
+        val saleRequest = eftFactory.getSaleRequest(SaleRequestModel(amount, currencyCode, documentNr, skipReceiptPrint, skipCustomerReceiptPrint))
 
         // Return the SaleRequest instead of intent
         return saleRequest

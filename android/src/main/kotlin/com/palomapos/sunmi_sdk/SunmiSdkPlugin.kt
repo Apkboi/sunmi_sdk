@@ -79,7 +79,9 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
                 val amount = call.argument<Long>("amount")!!
                 val currencyCode = call.argument<String>("currencyCode")!!
                 val documentNr = call.argument<String>("documentNr")!!
-                val intent = paymentSDKHandler.startCardPayment(amount, currencyCode, documentNr)
+                val skipReceiptPrint = call.argument<Boolean>("skipReceiptPrint")!!
+                val skipCustomerReceiptPrint = call.argument<Boolean>("skipCustomerReceiptPrint")!!
+                val intent = paymentSDKHandler.startCardPayment(amount, currencyCode, documentNr, skipReceiptPrint, skipCustomerReceiptPrint)
                 pendingResult = result
                 activity?.let { startActivityForResult(it, intent.intent(), intent.requestCode(), null) }
 
@@ -178,6 +180,7 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
                     null -> pendingResult?.error("CLOSE_DOC_ERROR", "Closing document failed", null)
                 }
             }
+
             EFTRequestCode.PRINT_PLAINTEXT -> {
                 when (val response = EFTResponseFactory.getPrintPlaintextResponse(resultCode, data)) {
                     is Response.Success -> pendingResult?.success("Printing successful")

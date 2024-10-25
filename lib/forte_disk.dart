@@ -67,7 +67,8 @@ class SunmiSdk {
     bool skipCustomerReceiptPrint = false,
   }) async {
     try {
-      final result = await platform.invokeMethod('refundPayment', {
+
+      final result = await platform.invokeMethod('refundTransaction', {
         'refundAmount': refundAmount,
         'currencyCode': currencyCode,
         'documentNr': documentNr,

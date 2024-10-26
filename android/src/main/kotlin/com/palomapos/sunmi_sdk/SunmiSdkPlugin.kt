@@ -7,6 +7,7 @@ import SunmiSdkApi
 import VoidResponse
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import androidx.annotation.NonNull
 import androidx.core.app.ActivityCompat.startActivityForResult
 import eu.ashburn.smartpos.api.EFTRequestCode
@@ -21,7 +22,11 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.time.ZoneId
 
 /** SunmiSdkPlugin */
 class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
@@ -134,18 +139,33 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
                 val refundAmount = call.argument<Long>("refundAmount")!!
                 val stan = call.argument<String>("stan")!!
                 val rrn = call.argument<String>("rrn")!!
-                val date = call.argument<Date>("date")!!
+                val date = call.argument<String>("transactionDate")!!
                 val currencyCode = call.argument<String>("currencyCode")!!
                 val skipReceiptPrint = call.argument<Boolean>("skipReceiptPrint")!!
                 val skipCustomerReceiptPrint = call.argument<Boolean>("skipCustomerReceiptPrint")!!
 
+
+                    val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+
+                    } else {
+                        TODO("VERSION.SDK_INT < O")
+                    }
+
+                    val dateTime = LocalDateTime.parse(date, formatter)
+                val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
+
+
+                    // Use dateTime as needed
+                    println("Received DateTime: $dateTime")
 
                 val refundRequest = paymentSDKHandler.initiateRefund(
                     refundAmount = refundAmount,              // Refund amount in minor units (e.g., 1000 = $10.00)
                     currencyCode = currencyCode,              // Currency code
                     documentNr = documentNr,          // Unique document number
                     stan = stan,                   // STAN from original transaction
-                    date = Date(),                     // Date of original transaction
+                    date = Date.from(instant),                     // Date of original transaction
                     rrn = rrn,                 // RRN from original transaction
                     skipReceiptPrint = skipReceiptPrint,           // Skip printing the merchant receipt
                     skipCustomerReceiptPrint = skipCustomerReceiptPrint   // Do not skip printing customer receipt

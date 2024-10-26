@@ -1,10 +1,10 @@
 class RefundResponse {
-  final String operationId;
-  final String documentNr;
-  final double refundedAmount;
-  final String rrn;
-  final String stan;
-  final String refundStatus;
+  final dynamic operationId;
+  final dynamic documentNr;
+  final dynamic refundedAmount;
+  final dynamic rrn;
+  final dynamic stan;
+  final dynamic refundStatus;
   final String receiptText;
 
   RefundResponse({

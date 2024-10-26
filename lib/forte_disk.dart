@@ -36,7 +36,7 @@ class SunmiSdk {
     int amount,
     String currencyCode,
     String documentNr, {
-     bool skipReceiptPrint =true,
+    bool skipReceiptPrint = true,
     bool skipCustomerReceiptPrint = true,
   }) async {
     try {
@@ -67,7 +67,6 @@ class SunmiSdk {
     bool skipCustomerReceiptPrint = false,
   }) async {
     try {
-
       final result = await platform.invokeMethod('refundTransaction', {
         'refundAmount': refundAmount,
         'currencyCode': currencyCode,

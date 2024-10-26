@@ -73,7 +73,7 @@ class SunmiSdk {
         'currencyCode': currencyCode,
         'documentNr': documentNr,
         'stan': stan,
-        'transactionDate': transactionDate.toIso8601String(),
+        'transactionDate': transactionDate.toString(),
         'rrn': rrn,
         'skipReceiptPrint': skipReceiptPrint,
         'skipCustomerReceiptPrint': skipCustomerReceiptPrint,

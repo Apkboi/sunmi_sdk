@@ -154,7 +154,7 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
                     }
 
                     val dateTime = LocalDateTime.parse(date, formatter)
-                val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
+                    val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
 
 
                     // Use dateTime as needed

@@ -5,7 +5,7 @@ class RefundResponse {
   final dynamic rrn;
   final dynamic stan;
   final dynamic refundStatus;
-  final String receiptText;
+  final dynamic receiptText;
 
   RefundResponse({
     required this.operationId,

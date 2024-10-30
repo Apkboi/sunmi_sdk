@@ -145,20 +145,20 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
                 val skipCustomerReceiptPrint = call.argument<Boolean>("skipCustomerReceiptPrint")!!
 
 
-                    val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val formatter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
 
-                    } else {
-                        TODO("VERSION.SDK_INT < O")
-                    }
+                } else {
+                    TODO("VERSION.SDK_INT < O")
+                }
 
-                    val dateTime = LocalDateTime.parse(date, formatter)
-                    val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
+                val dateTime = LocalDateTime.parse(date, formatter)
+                val instant = dateTime.atZone(ZoneId.systemDefault()).toInstant()
 
 
-                    // Use dateTime as needed
-                    println("Received DateTime: $dateTime")
+                // Use dateTime as needed
+                println("Received DateTime: $dateTime")
 
                 val refundRequest = paymentSDKHandler.initiateRefund(
                     refundAmount = refundAmount,              // Refund amount in minor units (e.g., 1000 = $10.00)
@@ -222,33 +222,43 @@ class SunmiSdkPlugin : FlutterPlugin, MethodCallHandler {
 
                 val saleResponse = response.data
 
-                // Create a JSON Object to map to Dart
-                val saleResponseJson = JSONObject().apply {
-                    put("operationId", saleResponse.operationId)
-                    put("cryptogram", saleResponse.cryptogram)
-                    put("documentNr", saleResponse.documentNr)
-                    put("amountAuthorized", saleResponse.amountAuthorized)
-                    put("amountAdditional", saleResponse.amountAdditional)
-                    put("authCode", saleResponse.authCode)
-                    put("RRN", saleResponse.RRN)
-                    put("STAN", saleResponse.STAN)
-                    put("cardType", saleResponse.cardType)
-                    put("state", saleResponse.state)
-                    put(
-                        "CVMApplied",
-                        JSONArray(saleResponse.CVMApplied.map { it.toString() })
-                    ) // Assuming CVM is an Enum or object that can be stringified
-                    put("receiptText", saleResponse.receiptText)
-                    put("actionCode", saleResponse.actionCode)
-                    put("cardPAN", saleResponse.cardPan)
-                    put("cardName", saleResponse.cardName)
-                    put("amountAdditionalField", JSONArray(saleResponse.additionalAmounts.map {
-                        it
-                    }))
-                    put("DCCStatus", saleResponse.dccStatus)
+                if (saleResponse.state == "DECLINED") {
+                    pendingResult?.error("PAYMENT_ERROR", "Payment declined", null)
+
+                }else {
+
+                    // Create a JSON Object to map to Dart
+                    val saleResponseJson = JSONObject().apply {
+                        put("operationId", saleResponse.operationId)
+                        put("cryptogram", saleResponse.cryptogram)
+                        put("documentNr", saleResponse.documentNr)
+                        put("amountAuthorized", saleResponse.amountAuthorized)
+                        put("amountAdditional", saleResponse.amountAdditional)
+                        put("authCode", saleResponse.authCode)
+                        put("RRN", saleResponse.RRN)
+                        put("STAN", saleResponse.STAN)
+                        put("cardType", saleResponse.cardType)
+                        put("state", saleResponse.state)
+                        put(
+                            "CVMApplied",
+                            JSONArray(saleResponse.CVMApplied.map { it.toString() })
+                        ) // Assuming CVM is an Enum or object that can be stringified
+                        put("receiptText", saleResponse.receiptText)
+                        put("actionCode", saleResponse.actionCode)
+                        put("cardPAN", saleResponse.cardPan)
+                        put("cardName", saleResponse.cardName)
+                        put("amountAdditionalField", JSONArray(saleResponse.additionalAmounts.map {
+                            it
+                        }))
+                        put("DCCStatus", saleResponse.dccStatus)
+                    }
+
+
+
+
+                    pendingResult?.success(saleResponseJson.toString())
                 }
 
-                pendingResult?.success(saleResponseJson.toString())
 
 
             }
